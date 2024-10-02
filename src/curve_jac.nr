@@ -403,7 +403,7 @@ impl<BigNum, CurveParams> CurveJ<BigNum, CurveParams> where BigNum: BigNumTrait,
         let Z1 = self.z;
 
         let (_, YY_mul_2): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression([[Y1]], [[false]], [[Y1, Y1]], [[false, false]], [], []);
-        let (_, XX_mul_3): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression(
+        let mut (_, XX_mul_3): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression(
             [[X1]],
             [[false]],
             [[X1, X1, X1]],
@@ -411,6 +411,12 @@ impl<BigNum, CurveParams> CurveJ<BigNum, CurveParams> where BigNum: BigNumTrait,
             [],
             []
         );
+        // TODO: tidy this up and make more efficient?!
+        if (CurveParams::a().get_limb(0) != 0) {
+            let ZZ = Z1.mul(Z1);
+            let AZZZZ = ZZ.mul(ZZ).mul(CurveParams::a());
+            XX_mul_3 = XX_mul_3.add(AZZZZ);
+        }
         let (_, D): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression([[X1, X1]], [[false, false]], [[YY_mul_2]], [[false]], [], []);
         let mut (_, X3): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression(
             [[XX_mul_3]],
@@ -428,12 +434,7 @@ impl<BigNum, CurveParams> CurveJ<BigNum, CurveParams> where BigNum: BigNumTrait,
             [],
             []
         );
-        // TODO: tidy this up and make more efficient?!
-        if (CurveParams::a().get_limb(0) != 0) {
-            let ZZ = Z1.mul(Z1);
-            let AZZZZ = ZZ.mul(ZZ).mul(CurveParams::a());
-            X3 = X3.add(AZZZZ);
-        }
+
         let (_, Z3): (BigNum, BigNum ) = BigNum::__compute_quadratic_expression([[Y1]], [[false]], [[Z1, Z1]], [[false, false]], [], []);
         (
             CurveJ { x: X3, y: Y3, z: Z3, is_infinity: false }, JTranscript { lambda_numerator: XX_mul_3, x3: X3, y3: Y3, z3: Z3 }

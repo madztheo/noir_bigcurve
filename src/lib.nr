@@ -1,7 +1,7 @@
 mod scalar_field;
 mod curve_jac;
 mod test_data;
-mod bigcurve_test;
+mod bigcurve_test_p256;
 
 use dep::bignum::BigNum;
 
