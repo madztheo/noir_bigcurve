@@ -4,10 +4,21 @@ use crate::{BigCurve, BigCurveTrait};
 use crate::curve_jac::CurveJ;
 use crate::CurveParamsTrait;
 
+use crate::curves::brainpoolP192r1::BrainpoolP192r1_Params;
+use crate::curves::brainpoolP192t1::BrainpoolP192t1_Params;
+use crate::curves::brainpoolP224r1::BrainpoolP224r1_Params;
+use crate::curves::brainpoolP224t1::BrainpoolP224t1_Params;
+use crate::curves::secp224r1::Secp224r1_Params;
 use bignum::BigNum;
 use bignum::BLS12_377_Fq;
 use bignum::BLS12_381_Fq;
 use bignum::BN254_Fq;
+use bignum::BrainpoolP192r1_Fq;
+use bignum::BrainpoolP192t1_Fq;
+use bignum::BrainpoolP224r1_Fq;
+use bignum::BrainpoolP224t1_Fq;
+use bignum::fields::secp192r1Fq::Secp192r1_Fq;
+use bignum::fields::secp224r1Fq::Secp224r1_Fq;
 use bignum::MNT4_753_Fq;
 use bignum::MNT6_753_Fq;
 use bignum::Pallas_Fq;
@@ -15,7 +26,6 @@ use bignum::Secp256k1_Fr;
 use bignum::Secp256r1_Fr;
 use bignum::Secp384r1_Fr;
 use bignum::Vesta_Fq;
-
 pub struct BLS377PartialCurveParams {}
 
 impl CurveParamsTrait<BLS12_377_Fq> for BLS377PartialCurveParams {
@@ -149,6 +159,37 @@ impl CurveParamsTrait<Secp256r1_Fr> for Secp256r1PartialCurveParams {
 
     fn offset_generator() -> [Secp256r1_Fr; 2] {
         panic(f"generator does not exist!")
+    }
+}
+
+pub struct P192PartialCurveParams {}
+impl CurveParamsTrait<Secp192r1_Fq> for P192PartialCurveParams {
+    fn a() -> Secp192r1_Fq {
+        let a: Field = 0xfffffffffffffffffffffffffffffffefffffffffffffffc;
+        Secp192r1_Fq::from(a)
+    }
+    fn b() -> Secp192r1_Fq {
+        let b = 0x64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1;
+        Secp192r1_Fq::from(b)
+    }
+
+    fn one() -> [Secp192r1_Fq; 2] {
+        let x = 0x188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012;
+        let y = 0x07192b95ffc8da78631011ed6b24cdd573f977a11e794811;
+        [Secp192r1_Fq::from(x), Secp192r1_Fq::from(y)]
+    }
+
+    fn offset_generator() -> [Secp192r1_Fq; 2] {
+        [
+            Secp192r1_Fq::from_limbs([0x2cd1ad32ee897a00308b502d4b73ed, 0x4e9f7bc59599429c4]),
+            Secp192r1_Fq::from_limbs([0xa3f59ce015e46c1665c2b29b940e2b, 0xb343f4dacc57835d9]),
+        ]
+    }
+    fn offset_generator_final() -> [Secp192r1_Fq; 2] {
+        [
+            Secp192r1_Fq::from_limbs([0x2159802de6552a9f8dd88c322f3e94, 0x337387dc59578aa74f]),
+            Secp192r1_Fq::from_limbs([0xee6981164ce518b87adb6c499e4f28, 0x975029505881daf7ed]),
+        ]
     }
 }
 
@@ -485,18 +526,55 @@ where
     println(
         f"  fn offset_generator_final() -> [BigNum<{n}, {paramstr}>; 2] {{ {offset_generator_final} }}",
     );
-    println("}}");
+    println("");
 }
 
 #[test]
 fn test_compute_and_print_offset_generators() {
     unsafe {
+        /**
         compute_and_print_offset_generators::<BN254_Fq, BN254PartialCurveParams, _, _, 64>(
             3,
             "BN254_Fq_Params",
             "BN254PartialCurveParams",
             1,
+        ); compute_and_print_offset_generators::<Secp224r1_Fq, Secp224r1_Params, _, _, 57>(
+            2,
+            "Secp224r1_Fq_Params",
+            "Secp224r1_Params",
+            1,
         );
+        
+
+        compute_and_print_offset_generators::<BrainpoolP192r1_Fq, BrainpoolP192r1_Params, _, _, 49>(
+            2,
+            "BrainpoolP192r1_Fq_Params",
+            "BrainpoolP192r1_Params",
+            1,
+        );
+        compute_and_print_offset_generators::<BrainpoolP192t1_Fq, BrainpoolP192t1_Params, _, _, 49>(
+            2,
+            "BrainpoolP192t1_Fq_Params",
+            "BrainpoolP192t1_Params",
+            1,
+        );
+
+        compute_and_print_offset_generators::<BrainpoolP224t1_Fq, BrainpoolP224t1_Params, _, _, 57>(
+            2,
+            "BrainpoolP224t1_Fq_Params",
+            "BrainpoolP224t1_Params",
+            1,
+        ); 
+
+        **/
+        compute_and_print_offset_generators::<BrainpoolP224r1_Fq, BrainpoolP224r1_Params, _, _, 57>(
+            2,
+            "BrainpoolP224r1_Fq_Params",
+            "BrainpoolP224r1_Params",
+            1,
+        );
+
+        // compute_and_print_offset_generators::<P192_Fq, P192PartialCurveParams, _, _, 49>(2, "P192_Fq_Params", "P192PartialCurveParams", 1);
         // compute_and_print_offset_generators::<PallasBN, PallasPartialCurveParams, _, _, 64>(3, "Pallas_Fq_Params", "Pallas_Params", 1);
         // compute_and_print_offset_generators::<VestaBN, VestaPartialCurveParams, _, _, 64>(3, "Vesta_Fq_Params", "Vesta_Params", 1);
         // compute_and_print_offset_generators::<BLS377BN, BLS377PartialCurveParams, _, _, 64>(
